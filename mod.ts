@@ -1,9 +1,47 @@
+import FastestValidator from "https://esm.sh/fastest-validator@1";
 
-const create = (validation, initialize, actions) => {
-    
-return {
-    db: 
-}
-}
+const create = (schema, initialize, actions) => {
+  const v = new FastestValidator();
+  return {
+    db: initialize,
+    actions,
+  };
+};
 
-const newDB = create()
+const firstPageSchema = {
+  id: { type: "number", positive: true, integer: true },
+  name: { type: "string", min: 3, max: 255 },
+  status: "boolean", // short-hand def
+};
+
+const firstPageInit = {
+  id: 0,
+  name: "nothing",
+  status: false,
+};
+
+const firstPageActions = {
+  ["getFirstPage"]: (get) => get,
+  ["setStatus"]: (get, set, validator, schema) => {
+    const check = validator.compile(schema.status);
+    check(set);
+
+    // read firstPageState.json and change the set object and save it to disk
+    //
+
+    // return the cloned object
+    return {
+      ...get,
+      ...set,
+    };
+  },
+};
+
+const firstPageState = create(firstPageSchema, firstPageInit, firstPageActions);
+
+const {
+  db: { id },
+  actions: { getFirstPage, setStatus },
+} = firstPageState;
+
+setStatus();
