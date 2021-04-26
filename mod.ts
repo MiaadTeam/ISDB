@@ -1,7 +1,21 @@
 import FastestValidator from "https://esm.sh/fastest-validator@1";
+  
+const combinedObject = {
+  firstPage: {
+    db: {},
+    actions: [() => {}, () => {}]
+  },
+  wareType: {
+    db: [{}, {}],
+    actions: [() =>{}, () => {}]
+  }
+}
 
 const create = (schema, initialize, actions) => {
   const v = new FastestValidator();
+  const get = () => {
+      
+  }
   return {
     db: initialize,
     actions,
@@ -38,6 +52,8 @@ const firstPageActions = {
 };
 
 const firstPageState = create(firstPageSchema, firstPageInit, firstPageActions);
+
+const isBootstrap = ()
 
 const {
   db: { id },
