@@ -32,14 +32,16 @@ export const create = <T>(
       : await createFile(JSON.stringify(db));
   };
 
-  const checkData = (data: T) => {
+  const validate = (data: T) => {
     const isRight = check(data);
     return isRight === true
       ? isRight
       : throwError(`${isRight[0].message} but get ${isRight[0].actual}`);
   };
 
-  const set = async (data: T) => {
+  const getState = () => db;
+
+  const setState = async (data: T) => {
     db = {
       ...data,
     };
@@ -51,8 +53,9 @@ export const create = <T>(
 
   return {
     setup,
-    set,
-    checkData,
+    setState,
+    getState,
+    validate,
     db,
   };
 };
