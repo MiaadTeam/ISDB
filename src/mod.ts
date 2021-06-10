@@ -11,7 +11,7 @@ const v = new FastestValidator();
  * @param path if you provide path in args, data will be saved in files in json format
  */
 export const create = <T>(
-  init: T | T[],
+  init: T,
   schema: Record<string, unknown>,
   path?: string
 ) => {
@@ -46,7 +46,7 @@ export const create = <T>(
 
   const setState = async (data: T) => {
     db = Array.isArray(data)
-      ? [...data]
+      ? <T>(<unknown>[...data])
       : typeof data === "object"
       ? {
           ...data,
