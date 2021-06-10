@@ -2,36 +2,40 @@ import { exists } from "https://deno.land/std/fs/mod.ts";
 import FastestValidator from "https://esm.sh/fastest-validator@1";
 import { throwError } from "./throwError.ts";
 
+const v = new FastestValidator();
+
+/**
+ * create an ISDB database
+ * @param init
+ * @param schema
+ * @param path if you provide path in args, data will be saved in files in json format
+ */
 export const create = <T>(
   init: T,
   schema: Record<string, unknown>,
-  path: string,
-  options?: { isInMemory?: boolean }
+  path?: string
 ) => {
-  //extract options
-  const isInMemory = options?.isInMemory || false;
-
   let db = init;
 
-  const v = new FastestValidator();
   const check = v.compile(schema);
 
   const setup = async () => {
     const createFile = async (data: string) => {
-      await Deno.writeTextFile(path, data);
+      await Deno.writeTextFile(path!, data);
     };
 
     const setOnState = async () => {
-      const readState = JSON.parse(await Deno.readTextFile(path));
+      const readState = JSON.parse(await Deno.readTextFile(path!));
 
       return (db = {
         ...readState,
       });
     };
 
-    !isInMemory && (await exists(path))
-      ? await setOnState()
-      : await createFile(JSON.stringify(db));
+    path &&
+      ((await exists(path))
+        ? await setOnState()
+        : await createFile(JSON.stringify(db)));
   };
 
   const validate = (data: T) => {
@@ -47,7 +51,7 @@ export const create = <T>(
     db = {
       ...data,
     };
-    !isInMemory && (await Deno.writeTextFile(path, JSON.stringify(data)));
+    path && (await Deno.writeTextFile(path, JSON.stringify(data)));
   };
 
   return {
