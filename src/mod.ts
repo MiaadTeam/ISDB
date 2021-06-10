@@ -11,7 +11,7 @@ const v = new FastestValidator();
  * @param path if you provide path in args, data will be saved in files in json format
  */
 export const create = <T>(
-  init: T,
+  init: T | T[],
   schema: Record<string, unknown>,
   path?: string
 ) => {
@@ -26,10 +26,7 @@ export const create = <T>(
 
     const setOnState = async () => {
       const readState = JSON.parse(await Deno.readTextFile(path!));
-
-      return (db = {
-        ...readState,
-      });
+      db = readState;
     };
 
     path &&
@@ -48,9 +45,14 @@ export const create = <T>(
   const getState = () => db;
 
   const setState = async (data: T) => {
-    db = {
-      ...data,
-    };
+    db = Array.isArray(data)
+      ? [...data]
+      : typeof data === "object"
+      ? {
+          ...data,
+        }
+      : data;
+
     path && (await Deno.writeTextFile(path, JSON.stringify(data)));
   };
 
