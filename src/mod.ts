@@ -54,7 +54,8 @@ export const create = <T>(
         }
       : data;
 
-      path && (await ensureFile(path!))&&(await Deno.writeTextFile(path, JSON.stringify(data)));
+      path && await ensureFile(path) 
+      path && await Deno.writeTextFile(path, JSON.stringify(data))
   };
 
   return {
