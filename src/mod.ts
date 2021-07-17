@@ -1,4 +1,4 @@
-import { exists,ensureFile } from "https://deno.land/std/fs/mod.ts";
+import { exists, ensureFile } from "https://deno.land/std/fs/mod.ts";
 import FastestValidator from "https://esm.sh/fastest-validator@1";
 import { throwError } from "./throwError.ts";
 
@@ -21,7 +21,7 @@ export const create = <T>(
 
   const setup = async () => {
     const createFile = async (data: string) => {
-      await ensureFile(path!)
+      await ensureFile(path!);
       await Deno.writeTextFile(path!, data);
     };
 
@@ -36,8 +36,8 @@ export const create = <T>(
         : await createFile(JSON.stringify(db)));
   };
 
-  const validate = (data: T) => {
-    const isRight = check(data);
+  const validate = async (data: T) => {
+    const isRight = await check(data);
     return isRight === true
       ? isRight
       : throwError(`${isRight[0].message} but get ${isRight[0].actual}`);
@@ -54,8 +54,8 @@ export const create = <T>(
         }
       : data;
 
-      path && await ensureFile(path) 
-      path && await Deno.writeTextFile(path, JSON.stringify(data))
+    path && (await ensureFile(path));
+    path && (await Deno.writeTextFile(path, JSON.stringify(data)));
   };
 
   return {
